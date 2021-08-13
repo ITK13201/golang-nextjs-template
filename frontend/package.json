@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "watch": "onchange './src/**/*.{js,jsx,ts,tsx,scss,json,css}' -- prettier --config ./.prettierrc --write {{changed}}"
   },
   "dependencies": {
     "next": "^11.1.0",
