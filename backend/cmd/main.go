@@ -15,10 +15,10 @@ func Run() {
 		c.Next()
 	})
 	engine.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message":    "hello world",
 			"User-Agent": ua,
 		})
 	})
-	engine.Run(":3000")
+	engine.Run(":8000")
 }
