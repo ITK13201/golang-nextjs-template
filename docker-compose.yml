@@ -25,6 +25,7 @@ services:
         ports:
             - 8000:8000
         environment:
+            PORT: "8000"
             TZ: "Asia/Tokyo"
         depends_on:
             - mysql
@@ -39,6 +40,8 @@ services:
             - ./frontend:/frontend
         ports:
             - 3000:3000
+        environment:
+            PORT: "3000"
 
     mysql:
         build:
@@ -46,8 +49,10 @@ services:
             context: .
         restart: always
         environment:
+            MYSQL_USER: "user"
+            MYSQL_PASSWORD: "password"
             MYSQL_ROOT_PASSWORD: "root"
-            MYSQL_DATABASE: "go-next-test"
+            MYSQL_DATABASE: "golang_nextjs_template"
             TZ: "Asia/Tokyo"
         ports: 
             - 3306:3306

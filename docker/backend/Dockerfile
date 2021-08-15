@@ -14,6 +14,7 @@ COPY ./backend/go.sum ./
 RUN go mod download
 
 RUN go build -o /go/bin/air github.com/cosmtrek/air
+RUN go build -o /go/bin/sql-migrate github.com/rubenv/sql-migrate
 
 COPY ./backend ./
 
@@ -36,12 +37,12 @@ RUN go mod download
 
 COPY ./backend ./
 
-RUN go build -o ./bin/go-next-test
+RUN go build -o ./bin/golang-nextjs-template
 
 
 # Production environment
 FROM gcr.io/distroless/base:debug AS production
 
-COPY --from=builder /backend/bin/build /bin/go-next-test
+COPY --from=builder /backend/bin/build /bin/golang-nextjs-template
 
-ENTRYPOINT ["/bin/go-next-test"]
+ENTRYPOINT ["/bin/golang-nextjs-template"]

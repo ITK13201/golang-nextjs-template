@@ -3,46 +3,32 @@ package infrastructure
 import (
 	"database/sql"
 
-	"github.com/ITK13201/go-next-test/backend/config"
-	"github.com/ITK13201/go-next-test/backend/interfaces/database"
+	"github.com/go-gorp/gorp"
+	_ "github.com/go-sql-driver/mysql"
+
+	"github.com/ITK13201/golang-nextjs-template/backend/config"
+	"github.com/ITK13201/golang-nextjs-template/backend/domain"
+	"github.com/ITK13201/golang-nextjs-template/backend/interfaces/database"
 )
 
 type SqlHandler struct {
-	Conn *sql.DB
+	DbMap *gorp.DbMap
 }
 
-func NewSqlHandler(cfg *config.Config) *SqlHandler {
-	conn, err := sql.Open("mysql", cfg.DatabaseUrl)
+func NewSqlHandler(cfg *config.Config) database.SqlHandler {
+	db, err := sql.Open("mysql", (*cfg).DatabaseUrl)
 	if err != nil {
-		panic(err.Error)
+		panic(err)
 	}
-	SqlHandler := new(SqlHandler)
-	SqlHandler.Conn = conn
-	return SqlHandler
-}
+	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{Engine: "InnoDB", Encoding: "UTF8"}}
 
-func (handler *SqlHandler) Execute(statement string, args ...interface{}) (database.Result, error) {
-	res := SqlResult{}
-	result, err := handler.Conn.Exec(statement, args...)
+	// Mapping structures to tables
+	dbmap.AddTableWithName(domain.User{}, "users").SetKeys(true, "Id")
+
+	err = dbmap.CreateTablesIfNotExists()
 	if err != nil {
-		return res, err
+		panic(err)
 	}
-	res.Result = result
-	return res, nil
-}
 
-type SqlResult struct {
-	Result sql.Result
-}
-
-func (r SqlResult) LastInsertId() (int64, error) {
-	return r.Result.LastInsertId()
-}
-
-func (r SqlResult) RowsAffected() (int64, error) {
-	return r.Result.RowsAffected()
-}
-
-type SqlRow struct {
-	Rows *sql.Rows
+	return dbmap
 }

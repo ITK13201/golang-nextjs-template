@@ -1,24 +1,22 @@
 package cmd
 
 import (
-	"net/http"
+	"fmt"
 
-	"github.com/gin-gonic/gin"
+	"github.com/ITK13201/golang-nextjs-template/backend/config"
+	"github.com/ITK13201/golang-nextjs-template/backend/infrastructure"
 )
 
 func Run() {
-	engine := gin.Default()
-	ua := ""
-	// use middleware
-	engine.Use(func(c *gin.Context) {
-		ua = c.GetHeader("User-Agent")
-		c.Next()
-	})
-	engine.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message":    "hello world",
-			"User-Agent": ua,
-		})
-	})
-	engine.Run(":8000")
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	router := infrastructure.InitRouter(cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	router.Run(fmt.Sprintf(":%d", (*cfg).Port))
 }

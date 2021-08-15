@@ -1,9 +1,8 @@
 package domain
 
 type User struct {
-	ID        int
-	FirstName string
-	LastName  string
+	Id       int    `json:"id" db:"id"`
+	Username string `json:"username" db:"username"`
 }
 
 type Users []User
