@@ -24,7 +24,7 @@ func InitRouter(cfg *config.Config) *gin.Engine {
 	// router.GET("/users/:id", func(c *gin.Context) { userController.Show(c) })
 
 	// sample
-	router.GET("/", func(c *gin.Context) {
+	router.GET("/api/test/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "hello world",
 		})
