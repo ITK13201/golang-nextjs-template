@@ -2,33 +2,47 @@ package infrastructure
 
 import (
 	"database/sql"
-
-	"github.com/go-gorp/gorp"
+	"github.com/ITK13201/golang-nextjs-template/backend/interfaces/database/handler"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 
 	"github.com/ITK13201/golang-nextjs-template/backend/config"
-	"github.com/ITK13201/golang-nextjs-template/backend/domain"
-	"github.com/ITK13201/golang-nextjs-template/backend/interfaces/database"
 )
 
 type SqlHandler struct {
-	DbMap *gorp.DbMap
+	Db *sqlx.DB
 }
 
-func NewSqlHandler(cfg *config.Config) database.SqlHandler {
-	db, err := sql.Open("mysql", (*cfg).DatabaseUrl)
-	if err != nil {
-		panic(err)
-	}
-	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{Engine: "InnoDB", Encoding: "UTF8"}}
-
-	// Mapping structures to tables
-	dbmap.AddTableWithName(domain.User{}, "users").SetKeys(true, "Id")
-
-	err = dbmap.CreateTablesIfNotExists()
+func NewSqlHandler(cfg *config.Config) handler.SqlHandler {
+	db, err := sqlx.Connect("mysql", (*cfg).DatabaseUrl)
 	if err != nil {
 		panic(err)
 	}
 
-	return dbmap
+	sqlHandler := new(SqlHandler)
+	sqlHandler.Db = db
+
+	return sqlHandler
+}
+
+func (handler *SqlHandler) NamedExec(query string, arg interface{}) (sql.Result, error) {
+	res := SqlResult{}
+	result, err := handler.Db.NamedExec(query, arg)
+	if err != nil {
+		return res, err
+	}
+	res.Result = result
+	return res, nil
+}
+
+type SqlResult struct {
+	Result sql.Result
+}
+
+func (r SqlResult) LastInsertId() (int64, error) {
+	return r.Result.LastInsertId()
+}
+
+func (r SqlResult) RowsAffected() (int64, error) {
+	return r.Result.RowsAffected()
 }
