@@ -18,8 +18,8 @@ func InitRouter(cfg *config.Config) *gin.Engine {
 	userController := controllers.NewUserController(NewSqlHandler(cfg))
 
 	router.POST("/api/users/", func(c *gin.Context) { userController.Create(c) })
-	router.GET("/api/users", func(c *gin.Context) { userController.Index(c) })
 	router.GET("/api/users/:id", func(c *gin.Context) { userController.Show(c) })
+	router.GET("/api/users/", func(c *gin.Context) { userController.Index(c) })
 
 	return router
 }
