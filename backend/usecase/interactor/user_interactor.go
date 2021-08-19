@@ -9,9 +9,13 @@ type UserInteractor struct {
 	UserRepository repository.UserRepository
 }
 
-func (interactor *UserInteractor) Add(u domain.User) (err error) {
-	_, err = interactor.UserRepository.Store(u)
-	return err
+func (interactor *UserInteractor) Add(u domain.User) (*domain.User, error) {
+	id, err := interactor.UserRepository.Store(u)
+	if err != nil {
+		return nil, err
+	}
+	user, err := interactor.UserRepository.FindById(id)
+	return user, err
 }
 
 func (interactor *UserInteractor) GetById(id int) (*domain.User, error) {
