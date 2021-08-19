@@ -35,6 +35,22 @@ func (handler *SqlHandler) NamedExec(query string, arg interface{}) (sql.Result,
 	return res, nil
 }
 
+func (handler *SqlHandler) Get(dest interface{}, query string, args ...interface{}) error {
+	err := handler.Db.Get(dest, query, args...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (handler *SqlHandler) Select(dest interface{}, query string, args ...interface{}) error {
+	err := handler.Db.Select(dest, query, args...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type SqlResult struct {
 	Result sql.Result
 }

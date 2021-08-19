@@ -10,6 +10,16 @@ type UserInteractor struct {
 }
 
 func (interactor *UserInteractor) Add(u domain.User) (err error) {
-	_, err = interactor.UserRepository.Insert(u)
+	_, err = interactor.UserRepository.Store(u)
 	return err
+}
+
+func (interactor *UserInteractor) GetById(id int) (*domain.User, error) {
+	u, err := interactor.UserRepository.FindById(id)
+	return u, err
+}
+
+func (interactor *UserInteractor) GetAll() (domain.Users, error) {
+	users, err := interactor.UserRepository.FindAll()
+	return users, err
 }

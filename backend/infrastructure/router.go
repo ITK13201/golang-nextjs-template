@@ -1,8 +1,6 @@
 package infrastructure
 
 import (
-	"net/http"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
@@ -20,15 +18,8 @@ func InitRouter(cfg *config.Config) *gin.Engine {
 	userController := controllers.NewUserController(NewSqlHandler(cfg))
 
 	router.POST("/api/users/", func(c *gin.Context) { userController.Create(c) })
-	// router.GET("/users", func(c *gin.Context) { userController.Index(c) })
-	// router.GET("/users/:id", func(c *gin.Context) { userController.Show(c) })
-
-	// sample
-	router.GET("/api/test/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "hello world",
-		})
-	})
+	router.GET("/api/users", func(c *gin.Context) { userController.Index(c) })
+	router.GET("/api/users/:id", func(c *gin.Context) { userController.Show(c) })
 
 	return router
 }
